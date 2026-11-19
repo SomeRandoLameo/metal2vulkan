@@ -275,7 +275,8 @@ impl Rebinds {
 
     /// The buffer of `key` is gone.
     pub(super) fn forget(&self, key: ResourceKey) {
-        if let Some(entry) = lock(&self.buffers).remove(&key) {
+        let removed_entry = lock(&self.buffers).remove(&key);
+        if let Some(entry) = removed_entry {
             self.live.fetch_sub(1, Ordering::Relaxed);
             if entry.detached {
                 self.detached.fetch_sub(1, Ordering::Relaxed);
